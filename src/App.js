@@ -1,42 +1,46 @@
 import './App.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
   const [filteredTodoList, setFilteredTodoList] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [filterValue, setFilterValue] = useState('');
 
-  function removeFromTodoList(id) {
+  useEffect(() => {
+    const filtered = todoList.filter(todo => todo.name.toLowerCase().includes(filterValue.toLowerCase()));
+    setFilteredTodoList(filtered);
+  }, [filterValue, todoList]);
+
+  const removeFromTodoList = (id) => {
     setTodoList(todoList.filter(todo => todo.id !== id));
-    setFilteredTodoList(filteredTodoList.filter(todo => todo.id !== id));
   }
 
-  function updateInput(event) {
+  const updateInput = (event) => {
     setInputValue(event.target.value);
   }
 
-  function handleAddTodoList(event) {
+  const handleAddTodoList = (event) => {
     event.preventDefault();
-    const newItem = {id: Math.random(), name: inputValue};
-    setTodoList([...todoList, newItem]);
-    setFilteredTodoList([...todoList, newItem]);
+    const newTodoItem = {id: Math.random(), name: inputValue};
+    setTodoList([...todoList, newTodoItem]);
     setInputValue('');
+    setFilterValue('');
   }
 
-  function filterTodoList(event) {
-    const filtered = todoList.filter(todo => todo.name.toLowerCase().includes(event.target.value.toLowerCase()));
-    setFilteredTodoList(filtered);
-  }
+  const handleTodoListChange = (event) => {
+    setFilterValue(event.target.value);
+  };
 
   return (
     <>
-      <h1>Lista de tarefas</h1>
+      <h1>Lista de tarefwas</h1>
       <form onSubmit={handleAddTodoList}>
         <input required minLength={2} maxLength={50} type="text" value={inputValue} onChange={updateInput} placeholder="Adicione novos items aqui..." />
         <input type="submit" value="Add"/>
       </form>
       <div>
-        <input type="text" onChange={filterTodoList} placeholder="Digite aqui para filtrar..." />
+        <input type="text" value={filterValue} onChange={handleTodoListChange} placeholder="Digite aqui para filtrar..." />
         <ul>
           {
             filteredTodoList.map(todo => (
