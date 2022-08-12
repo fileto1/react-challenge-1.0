@@ -1,16 +1,10 @@
 import './App.css';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
-  const [filteredTodoList, setFilteredTodoList] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [filterValue, setFilterValue] = useState('');
-
-  useEffect(() => {
-    const filtered = todoList.filter(todo => todo.name.toLowerCase().includes(filterValue.toLowerCase()));
-    setFilteredTodoList(filtered);
-  }, [filterValue, todoList]);
 
   const removeFromTodoList = (id) => {
     setTodoList(todoList.filter(todo => todo.id !== id));
@@ -25,7 +19,6 @@ function App() {
     const newTodoItem = {id: Math.random(), name: inputValue};
     setTodoList([...todoList, newTodoItem]);
     setInputValue('');
-    setFilterValue('');
   }
 
   const handleTodoListChange = (event) => {
@@ -34,7 +27,7 @@ function App() {
 
   return (
     <>
-      <h1>Lista de tarefwas</h1>
+      <h1>Lista de tarefas</h1>
       <form onSubmit={handleAddTodoList}>
         <input required minLength={2} maxLength={50} type="text" value={inputValue} onChange={updateInput} placeholder="Adicione novos items aqui..." />
         <input type="submit" value="Add"/>
@@ -43,11 +36,12 @@ function App() {
         <input type="text" value={filterValue} onChange={handleTodoListChange} placeholder="Digite aqui para filtrar..." />
         <ul>
           {
-            filteredTodoList.map(todo => (
-              <li key={todo.id}>
-                {todo.name} - 
-                <button onClick={() => removeFromTodoList(todo.id)}> X</button>
-              </li>
+            todoList.filter(todo => todo.name.toLowerCase().includes(filterValue.toLowerCase())).map(
+              todo => (
+                <li key={todo.id}>
+                  {todo.name} 
+                  <button onClick={() => removeFromTodoList(todo.id)}> X</button>
+                </li>
             ))
           }
         </ul>
